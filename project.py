@@ -1,15 +1,14 @@
 from cs50 import SQL
 from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
-import random
 import os
+import random
 import json
 
 app = Flask(__name__)
 
 # Configure CS50 Library to use SQLite database
 sql_url = "postgres://u71tjn7urbb255:pf8cbeacf614de01f5f9c1f3a6e4b04eca424c680723cec5bd98b689664376179@c5p86clmevrg5s.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dt7786muekh2d"
-db = SQL(os.getenv(sql_url))
+db = SQL(os.getenv("DATABASE_URL"))
 
 def reshape_and_reshuffle(query_result):
     reshuffled_data = []

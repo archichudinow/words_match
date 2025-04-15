@@ -1,0 +1,192 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    MATCH
+{% endblock %}
+
+{% block bar %}
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">WORDS MATCH</h1>
+            </div>
+            <div class="modal-body">
+                <div class="row p-3" id="endScore">SCORE:</div>
+            </div>
+            <div class="modal-footer">
+                    <a href="/game">
+                        <button type="button" class="btn btn-success disabled flex-grow-1">REPLAY</button>
+                    </a>
+                    <a href="/">
+                        <button type="button" class="btn btn-success disabled flex-grow-1">OTHER LIBRARY</button>
+                    </a>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block header %}
+    <div class="row gx-0">
+        <div class="col p-3 d-flex justify-content-start" id='score'>SCORE</div>
+        <div class="col p-3 d-flex justify-content-center gap-1">
+            <i class="bi bi-heart-fill" id="hp5"></i>
+            <i class="bi bi-heart-fill" id="hp4"></i>
+            <i class="bi bi-heart-fill" id="hp3"></i>
+            <i class="bi bi-heart-fill" id="hp2"></i>
+            <i class="bi bi-heart-fill" id="hp1"></i>
+            <i class="bi bi-heart-fill" id="hp0"></i>
+        </div>
+        <div class="col p-3 d-flex justify-content-end" id="timer"></div>
+    </div>
+
+    <div class="row mb-5 p-0 m-0">
+        <div class="col">
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" style="width: 0%" id="quest-progress"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="col d-flex gap-1 flex-wrap justify-content-center align-items-center" id="buttons">
+        {% for word in words_reshuffled %}
+            <button type="button" class="btn btn-light flex-grow-1" onclick="addToQueue(this)" id="{{ word.id }}">{{ word.lang }}</button>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const queue = [];
+        let buttonClicks = 0;
+        let time = 60;
+        let pairs = {{ wordsamount }};
+        let success = 0;
+        let hearts = 6;
+        let endGame = false;
+        let mistakes = [];
+
+        // Add to queue
+        function addToQueue(button) {
+            button.disabled = true;
+            queue.push(button);
+            buttonClicks++;
+
+            // Run check every second click
+            if (buttonClicks%2 == 0) {
+                pairCheck();
+            }
+        }
+
+        // Run pair check
+        function pairCheck() {
+            buttonOne = queue.shift();
+            buttonTwo = queue.shift();
+            //start check process
+            if (buttonOne.id == buttonTwo.id) {
+                // add danger class
+                buttonOne.classList.add("btn-success");
+                buttonTwo.classList.add("btn-success");
+
+                replaceWithPlaceholder(buttonOne);
+                replaceWithPlaceholder(buttonTwo);
+
+                success++;
+                updateScore();
+                updateProgress();
+
+            }else {
+                blinkRed(buttonOne);
+                blinkRed(buttonTwo);
+
+                buttonOne.disabled = false;
+                buttonTwo.disabled = false;
+
+                hearts--;
+                updateHearts();
+            }
+        }
+
+        function replaceWithPlaceholder(button) {
+            let placeholderOne = document.createElement("div");
+
+            placeholderOne.style.width = button.offsetWidth + "px";
+            placeholderOne.style.height = button.offsetHeight + "px";
+            placeholderOne.style.visibility = "hidden";
+
+            setTimeout(function() {
+                button.parentNode.replaceChild(placeholderOne, button);
+            }, 500);
+        }
+
+        function blinkRed(button) {
+            button.classList.remove("btn-light");
+            button.classList.add("btn-danger");
+            button.classList.add("disabled");
+
+            setTimeout(function() {
+                button.classList.remove("btn-danger");
+                button.classList.remove("disabled");
+                button.classList.add("btn-light");
+            }, 1000);
+        }
+
+        function runtimer() {
+            const timer = document.getElementById("timer");
+
+            const intervalId = setInterval(function () {
+            time--; // Decrease time by 1
+            timer.innerHTML = time; // Update the displayed time
+
+            if (time <= 0 || endGame) {
+                clearInterval(intervalId); // Stop the interval when time reaches 0
+                endGameScreen();
+            }
+            }, 1000);
+        }
+
+        function updateProgress() {
+            let update = Math.round(success / pairs * 100);
+            let progress = document.getElementById("quest-progress");
+            progress.style.width = `${update}%`;
+        }
+
+        function updateScore() {
+            if ((success / pairs) == 1) {
+                endGame = true;
+            }
+            let score = document.getElementById('score');
+            score.innerHTML = `SCORE: ${success}/${pairs}`
+
+            let endScore = document.getElementById('endScore');
+            endScore.innerHTML = `SCORE: ${success}/${pairs}`
+        }
+
+        function updateHearts() {
+            if (hearts != 0) {
+                hpicon = document.getElementById(`hp${hearts}`);
+                hpicon.classList.replace('bi-heart-fill', 'bi-heart');
+            }
+
+            if (hearts == 0) {
+                hpicon = document.getElementById(`hp${hearts}`);
+                hpicon.classList.replace('bi-heart-fill', 'bi-heart');
+                endGame = true;
+            }
+        }
+
+        function endGameScreen() {
+            const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            modal.show();
+        }
+
+        // run timer
+        runtimer();
+        updateScore();
+
+
+    </script>
+{% endblock %}

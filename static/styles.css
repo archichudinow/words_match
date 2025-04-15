@@ -1,0 +1,33 @@
+.btn {
+    padding: 40px;
+}
+
+.btn:disabled {
+background-color: #D2D1D0;
+color: white;
+border-color: #D2D1D0;
+}
+
+.btn-success {
+background-color: #9CD185;
+border-color: #9CD185;
+}
+
+.btn-success:disabled {
+background-color: #9CD185;
+border-color: #9CD185;
+}
+
+.btn-danger:disabled {
+    background-color: #D18F85;
+    border-color: #D18F85;
+}
+
+.progress {
+    height: 50px;
+    --bs-progress-bar-bg: #9CD185;
+}
+
+.bi {
+    color: #D18F85;
+}

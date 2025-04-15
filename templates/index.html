@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    SELECT TOPIC
+{% endblock %}
+
+{% block bar %}
+{% endblock %}
+
+{% block header %}
+<div class="row p-5 d-flex gap-1 flex-wrap justify-content-center align-items-center">WORDS MATCH:  ENGLISH-NETHERLANDS</div>
+{% endblock %}
+
+{% block main %}
+    <div class="col d-flex gap-1 flex-wrap justify-content-center align-items-center" id="buttons">
+        {% for library in libraries %}
+            <a href="/game?library={{ library.library }}">
+                <button type="button" class="btn btn-success disabled flex-grow-1" id="{{ library.library }}">
+                    {{ library.library }}
+                </button>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    </script>
+{% endblock %}
