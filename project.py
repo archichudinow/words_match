@@ -8,7 +8,8 @@ app = Flask(__name__)
 
 # Configure CS50 Library to use SQLite database
 sql_url = "postgres://u71tjn7urbb255:pf8cbeacf614de01f5f9c1f3a6e4b04eca424c680723cec5bd98b689664376179@c5p86clmevrg5s.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dt7786muekh2d"
-db = SQL(os.getenv("DATABASE_URL"))
+db_url = os.getenv("DATABASE_URL").replace("postgres://", "postgresql://", 1)
+db = SQL(db_url)
 
 def reshape_and_reshuffle(query_result):
     reshuffled_data = []
