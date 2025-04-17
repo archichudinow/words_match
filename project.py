@@ -45,6 +45,7 @@ def words():
     if request.method == "GET":
         return db.execute("SELECT * FROM words;")
 
+#comment
 
 if __name__ == "__main__":
     app.run(debug=True)
